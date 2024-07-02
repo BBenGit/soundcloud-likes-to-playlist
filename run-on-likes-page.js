@@ -2,8 +2,7 @@
 	const selectorsAll = [
 		'.sc-button-more',
 		'.sc-button-addtoset',
-		'.addToPlaylistButton',
-		'button[title="Close"]',
+		'.addToPlaylistButton'
 	];
 
 	addToPlaylist(selectorsAll);
@@ -11,20 +10,23 @@
 	function addToPlaylist (_selectors) {
 		const selectors = [..._selectors];
 
-		selecting(selectors.shift())
+		const currentSelector = selectors.shift()
+		selecting(currentSelector)
 			.then(element => {
-				if (element.getAttribute('title') === 'Remove'){
-					selectors.length = 0
+				if(currentSelector === '.addToPlaylistButton'){
+					if (element.getAttribute('title') === ''){
+						setTimeout(() => {
+							element.click()
+							document.querySelector('.badgeList__item').remove();
+							addToPlaylist([...selectorsAll])
+						}, 1000)
+					}else{
+						document.querySelector('.badgeList__item').remove();
+						addToPlaylist([...selectorsAll])
+					}
 				}else{
-					setTimeout(() => element.click(), 250);
-				}
-
-				if (selectors.length) {
-					addToPlaylist(selectors);
-				} else {
-					document.querySelector('.badgeList__item').remove();
-
-					setTimeout(() => addToPlaylist([...selectorsAll]), 250);
+					element.click()
+					addToPlaylist(selectors)
 				}
 			})
 			.catch(err => {
